@@ -1,6 +1,6 @@
 # My Astro Guide
 
-A bilingual English/Sinhala Vedic astrology web application using Lahiri ayanamsa, Sri Lankan fixed-house charts, rule-based life guidance, yoga and planetary explanations, city suggestions, and downloadable PDF reports.
+A bilingual English/Sinhala Vedic astrology web application using Lahiri ayanamsa, Sri Lankan fixed-house charts, rule-based calculations, a whole-chart AI life-guide report, profile-grounded AI chat, city suggestions, PWA installation, and downloadable PDF reports.
 
 ## Run locally
 
@@ -22,7 +22,7 @@ Open `http://localhost:3000`.
 
 City suggestions use the public Open-Meteo geocoding API with built-in fallbacks for major Sri Lankan cities. The calculation and rule-based report work without a database.
 
-### Enable AI life questions
+### Enable the complete AI life report and profile questions
 
 Add these variables in Vercel under **Project Settings → Environment Variables**, then redeploy:
 
@@ -31,7 +31,7 @@ OPENAI_API_KEY=your OpenAI API key
 OPENAI_MODEL=gpt-5-mini
 ```
 
-The key is used only by the server-side API route and is never exposed to the browser.
+The key is used only by server-side API routes and is never exposed to the browser. The complete life report considers the calculated Lagna, planets, houses, strengths, aspects, conjunctions, yogas, conditions, Navamsa, Panchanga, life-area scores and Dasha timeline together.
 
 ## PWA installation
 

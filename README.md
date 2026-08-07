@@ -31,7 +31,7 @@ OPENAI_API_KEY=your OpenAI API key
 OPENAI_MODEL=gpt-5-mini
 ```
 
-The key is used only by server-side API routes and is never exposed to the browser. The complete life report considers the calculated Lagna, planets, houses, strengths, aspects, conjunctions, yogas, conditions, Navamsa, Panchanga, life-area scores and Dasha timeline together.
+The key is used only by server-side API routes and is never exposed to the browser. The complete life report considers the calculated Lagna, planets, houses, strengths, aspects, conjunctions, yogas, conditions, Navamsa, Panchanga, life-area scores and Dasha timeline together. The same structured request also produces simple AI-polished explanations for all planets, detected yogas, life areas and active conditions without changing any calculated data.
 
 ## PWA installation
 

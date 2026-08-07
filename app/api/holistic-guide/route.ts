@@ -51,6 +51,29 @@ const schema = {
     purposeAndContribution: { type: "string" },
     currentChapter: { type: "string" },
     decisionGuide: { type: "string" },
+    polishedDetails: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        planets: {
+          type: "array", minItems: 9, maxItems: 9,
+          items: { type: "object", additionalProperties: false, properties: { key: { type: "string" }, title: { type: "string" }, explanation: { type: "string" }, lifeImpact: { type: "string" }, guidance: { type: "string" } }, required: ["key", "title", "explanation", "lifeImpact", "guidance"] },
+        },
+        yogas: {
+          type: "array", maxItems: 20,
+          items: { type: "object", additionalProperties: false, properties: { key: { type: "string" }, title: { type: "string" }, explanation: { type: "string" }, lifeImpact: { type: "string" }, guidance: { type: "string" } }, required: ["key", "title", "explanation", "lifeImpact", "guidance"] },
+        },
+        lifeAreas: {
+          type: "array", minItems: 8, maxItems: 8,
+          items: { type: "object", additionalProperties: false, properties: { key: { type: "string" }, title: { type: "string" }, explanation: { type: "string" }, guidance: { type: "string" } }, required: ["key", "title", "explanation", "guidance"] },
+        },
+        activeConditions: {
+          type: "array", maxItems: 20,
+          items: { type: "object", additionalProperties: false, properties: { key: { type: "string" }, title: { type: "string" }, explanation: { type: "string" }, guidance: { type: "string" } }, required: ["key", "title", "explanation", "guidance"] },
+        },
+      },
+      required: ["planets", "yogas", "lifeAreas", "activeConditions"],
+    },
     priorities: stringList(4, 6),
     cautions: stringList(3, 5),
     ninetyDayPlan: stringList(4, 6),
@@ -59,7 +82,7 @@ const schema = {
   required: [
     "centralPattern", "lifeDirection", "coreStrengths", "growthEdges", "career", "money",
     "relationships", "homeAndFamily", "healthAndBalance", "internationalDirection",
-    "purposeAndContribution", "currentChapter", "decisionGuide", "priorities", "cautions",
+    "purposeAndContribution", "currentChapter", "decisionGuide", "polishedDetails", "priorities", "cautions",
     "ninetyDayPlan", "synthesisNote",
   ],
 };
@@ -104,13 +127,15 @@ export async function POST(request: Request) {
 
 This must be one holistic life guide, not separate planet descriptions. First identify themes repeated across several independent factors. Then explain supporting power, counteracting power, neutralisation, uplift and timing. A strong statement requires several supporting factors; mixed evidence must be described as a balanced tendency. Connect identity, purpose, career, money, relationships, family, wellbeing, international direction and current timing into one coherent story.
 
-For career, rank only the supplied industry candidates and respect their calculated scores. Name concrete industries and realistic roles, then explain why the whole chart supports them. Give practical choices and actions, not vague spiritual language. Do not use fear, certainty, guaranteed predictions, medical claims, or factual claims about remedies. Keep each prose field to 2-4 short paragraphs or sentences, each list item to one clear sentence, and each role to a short job title. The fit field must remain exactly Excellent, Strong, or Supporting even in Sinhala.`,
+For career, rank only the supplied industry candidates and respect their calculated scores. Name concrete industries and realistic roles, then explain why the whole chart supports them. Give practical choices and actions, not vague spiritual language. Do not use fear, certainty, guaranteed predictions, medical claims, or factual claims about remedies.
+
+Also polish every supplied planet, yoga, life area and DETECTED active condition. Return each item once using its exact supplied key. Explain it in friendly everyday language, say how it can shape real life, and give one practical way to use or balance it. Interpret each item within the whole chart: mention balancing or reinforcing influences when relevant rather than treating it in isolation. For polishedDetails, use 1-2 short sentences per field. For all other prose fields, use 2-4 short sentences, each list item one sentence, and each role a short job title. The fit field must remain exactly Excellent, Strong, or Supporting even in Sinhala.`,
         input: [
           { role: "developer", content: `COMPLETE CALCULATED PROFILE:\n${JSON.stringify(profile(body.chart))}` },
           { role: "user", content: "Create my complete practical life-guide report from the entire profile." },
         ],
         text: { format: { type: "json_schema", name: "complete_life_guide", strict: true, schema } },
-        max_output_tokens: 8000,
+        max_output_tokens: 12000,
       }),
     });
 

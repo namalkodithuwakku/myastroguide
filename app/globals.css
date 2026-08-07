@@ -101,3 +101,25 @@ body{font-size:16px}.brand small,.language button,.eyebrow,.sectionLabel,.trustR
   .chatMessages article p{font-size:15px;line-height:1.68;padding:12px 13px}
   .chatComposer textarea{font-size:16px}
 }
+
+/* Compact Rasi and Navamsa charts */
+.polishedEvidence{display:grid;gap:22px}.polishedGroup{padding:24px;border:1px solid #e1e5ef;border-radius:20px;background:#fff}.polishedGroup>h3{margin:0 0 16px;color:#252944;font-size:20px}.polishedGroup>div{display:grid;grid-template-columns:1fr 1fr;gap:11px}.polishedGroup article{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;padding:17px;border-radius:15px;background:#f8f9fe}.polishedGroup article>span{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#e9edff;color:#4f46e5;font-size:12px;font-weight:850}.polishedGroup h4{margin:0 0 7px;color:#272b49;font-size:17px}.polishedGroup p{margin:5px 0;color:#5a6478;font-size:15px;line-height:1.68}.polishedGroup p b{color:#343a5a}.polishedGroup small{display:block;margin-top:9px;padding:10px 12px;border-radius:10px;background:#ecfaf4;color:#536171;font-size:14px;line-height:1.62}.polishedGroup small b{color:#087b57}.pdfExporting .polishedGroup article{break-inside:avoid;page-break-inside:avoid}
+.lagnaPanel{overflow:visible}
+.sriLankanChart{width:100%;max-width:470px;min-width:0;margin-inline:auto}
+.sriLankanChart .rasiCell{padding:9px}
+.cornerHouse{padding:8px;gap:4px}
+.sriLankanChart .rasiCell small,.sriLankanChart .rasiCell>div>b,.sriLankanChart .rasiCell p span,.sriLankanChart .rasiCell p strong,.cornerHouse small,.cornerHouse>div>b,.cornerHouse p span{font-size:10px}
+.cornerHouse p span,.rasiCell p span{padding:3px 4px}
+.sriLankanChart .chartCentre b{font-size:14px}
+.sriLankanChart .chartCentre small{font-size:11px}
+@media(max-width:680px){
+  .polishedEvidence{gap:14px}.polishedGroup{padding:18px 13px;border-radius:17px}.polishedGroup>h3{font-size:19px}.polishedGroup>div{grid-template-columns:1fr}.polishedGroup article{grid-template-columns:36px minmax(0,1fr);padding:15px 12px}.polishedGroup article>span{width:34px;height:34px}.polishedGroup h4{font-size:17px}.polishedGroup p{font-size:15px}.polishedGroup small{font-size:15px}
+  .lagnaPanel{overflow:visible;margin-inline:0;padding:16px 10px}
+  .sriLankanChart{width:min(100%,390px);max-width:390px;min-width:0}
+  .sriLankanChart .rasiCell{padding:6px}
+  .cornerHouse{padding:5px;gap:2px}
+  .sriLankanChart .rasiCell small,.sriLankanChart .rasiCell>div>b,.sriLankanChart .rasiCell p span,.sriLankanChart .rasiCell p strong,.cornerHouse small,.cornerHouse>div>b,.cornerHouse p span{font-size:9px}
+  .cornerHouse p span,.rasiCell p span{padding:2px 3px}
+  .sriLankanChart .chartCentre b{font-size:12px}
+  .sriLankanChart .chartCentre small{font-size:10px}
+}

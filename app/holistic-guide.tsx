@@ -23,6 +23,12 @@ type Guide = {
   purposeAndContribution: string;
   currentChapter: string;
   decisionGuide: string;
+  polishedDetails: {
+    planets: Array<{ key: string; title: string; explanation: string; lifeImpact: string; guidance: string }>;
+    yogas: Array<{ key: string; title: string; explanation: string; lifeImpact: string; guidance: string }>;
+    lifeAreas: Array<{ key: string; title: string; explanation: string; guidance: string }>;
+    activeConditions: Array<{ key: string; title: string; explanation: string; guidance: string }>;
+  };
   priorities: string[];
   cautions: string[];
   ninetyDayPlan: string[];
@@ -97,7 +103,15 @@ export default function HolisticGuide({ chart, language }: { chart: VedicChart; 
     <div className="reportSectionTitle"><span>03</span><div><p>{language === "si" ? "සම්පූර්ණ ජීවන පැතිකඩ" : "YOUR WHOLE-LIFE MAP"}</p><h3>{language === "si" ? "ජීවිතයේ ප්‍රධාන ක්ෂේත්‍ර" : "The main areas of your life"}</h3></div></div>
     <div className="wholeLifeGrid">{sections.map(section => <article key={section.key}><span>{section.icon}</span><h3>{language === "si" ? section.si : section.en}</h3><p>{section.text}</p></article>)}</div>
 
-    <div className="reportSectionTitle"><span>04</span><div><p>{language === "si" ? "ප්‍රායෝගික මාර්ග සිතියම" : "YOUR PRACTICAL ROADMAP"}</p><h3>{language === "si" ? "දැනගැනීමෙන් ක්‍රියාවට" : "Turn understanding into action"}</h3></div></div>
+    <div className="reportSectionTitle"><span>04</span><div><p>{language === "si" ? "AI සරල විස්තර" : "AI-POLISHED EXPLANATIONS"}</p><h3>{language === "si" ? "සෑම ගණනයක්ම ජීවිතයට අදහස් කරන්නේ කුමක්ද" : "What every calculation means for your life"}</h3></div></div>
+    <section className="polishedEvidence">
+      <div className="polishedGroup"><h3>{language === "si" ? "ග්‍රහ බලපෑම්" : "Planet influences"}</h3><div>{guide.polishedDetails.planets.map(item => <article key={item.key}><span>{item.title.slice(0, 2).toUpperCase()}</span><div><h4>{item.title}</h4><p>{item.explanation}</p><p><b>{language === "si" ? "ජීවිතයට බලපෑම:" : "Life impact:"}</b> {item.lifeImpact}</p><small><b>✓ {language === "si" ? "මඟපෙන්වීම:" : "Guidance:"}</b> {item.guidance}</small></div></article>)}</div></div>
+      {!!guide.polishedDetails.yogas.length && <div className="polishedGroup"><h3>{language === "si" ? "යෝග සහ විශේෂ හැකියාවන්" : "Yogas and special patterns"}</h3><div>{guide.polishedDetails.yogas.map(item => <article key={item.key}><span>✦</span><div><h4>{item.title}</h4><p>{item.explanation}</p><p><b>{language === "si" ? "ජීවිතයට බලපෑම:" : "Life impact:"}</b> {item.lifeImpact}</p><small><b>✓ {language === "si" ? "මඟපෙන්වීම:" : "Guidance:"}</b> {item.guidance}</small></div></article>)}</div></div>}
+      <div className="polishedGroup"><h3>{language === "si" ? "ජීවන ක්ෂේත්‍ර" : "Life areas"}</h3><div>{guide.polishedDetails.lifeAreas.map(item => <article key={item.key}><span>◇</span><div><h4>{item.title}</h4><p>{item.explanation}</p><small><b>✓ {language === "si" ? "මඟපෙන්වීම:" : "Guidance:"}</b> {item.guidance}</small></div></article>)}</div></div>
+      {!!guide.polishedDetails.activeConditions.length && <div className="polishedGroup"><h3>{language === "si" ? "සක්‍රිය විශේෂ තත්ත්ව" : "Active special conditions"}</h3><div>{guide.polishedDetails.activeConditions.map(item => <article key={item.key}><span>!</span><div><h4>{item.title}</h4><p>{item.explanation}</p><small><b>✓ {language === "si" ? "සමබර කිරීම:" : "How to balance:"}</b> {item.guidance}</small></div></article>)}</div></div>}
+    </section>
+
+    <div className="reportSectionTitle"><span>05</span><div><p>{language === "si" ? "ප්‍රායෝගික මාර්ග සිතියම" : "YOUR PRACTICAL ROADMAP"}</p><h3>{language === "si" ? "දැනගැනීමෙන් ක්‍රියාවට" : "Turn understanding into action"}</h3></div></div>
     <div className="priorityGrid"><article><h3>✓ {language === "si" ? "දැන් ප්‍රමුඛත්වය දෙන්න" : "Priorities now"}</h3><ol>{guide.priorities.map(item => <li key={item}>{item}</li>)}</ol></article><article className="cautionList"><h3>! {language === "si" ? "සැලකිලිමත් විය යුතු දේ" : "Watch carefully"}</h3><ul>{guide.cautions.map(item => <li key={item}>{item}</li>)}</ul></article></div>
     <section className="ninetyDayPlan"><h3>{language === "si" ? "ඉදිරි දින 90 සඳහා ක්‍රියාමාර්ග" : "Your next 90-day action plan"}</h3><div>{guide.ninetyDayPlan.map((item, index) => <article key={item}><span>{index + 1}</span><p>{item}</p></article>)}</div></section>
     <p className="synthesisNote">{guide.synthesisNote}</p>

@@ -20,7 +20,18 @@ Open `http://localhost:3000`.
 3. Keep the detected framework as **Next.js**.
 4. Use `npm run build` as the build command and deploy.
 
-No environment variables or database are required for this version. City suggestions use the public Open-Meteo geocoding API with built-in fallbacks for major Sri Lankan cities.
+City suggestions use the public Open-Meteo geocoding API with built-in fallbacks for major Sri Lankan cities. The calculation and rule-based report work without a database.
+
+### Enable AI life questions
+
+Add these variables in Vercel under **Project Settings → Environment Variables**, then redeploy:
+
+```text
+OPENAI_API_KEY=your OpenAI API key
+OPENAI_MODEL=gpt-5-mini
+```
+
+The key is used only by the server-side API route and is never exposed to the browser.
 
 ## PWA installation
 

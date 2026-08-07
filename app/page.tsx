@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { calculateVedicChart, type VedicChart } from "../lib/vedic-engine";
 import { buildLifeGuide } from "../lib/guidance-engine";
 import { explainPlanet, explainYoga } from "../lib/technical-explanations";
+import AstroChat from "./astro-chat";
 
 const copy = {
   en: {
@@ -362,6 +363,7 @@ export default function Home() {
             <details><summary>{language === "si" ? "මෙම මඟපෙන්වීම ලැබුණේ ඇයි?" : "Why this guidance?"}</summary><ul>{card.evidence.map(item=><li key={item}>{item}</li>)}</ul></details>
           </article>)}</div>
         </section>}
+        <AstroChat chart={chart} language={language} />
         <div className="technicalBridge"><span>✦</span><div><p>{language === "si" ? "සාක්ෂි සහ ගණනය" : "EVIDENCE & CALCULATIONS"}</p><h2>{language === "si" ? "සම්පූර්ණ ජ්‍යෝතිෂ පැතිකඩ" : "Detailed astrology profile"}</h2></div></div>
         <LagnaChart chart={chart} language={language} title={t.lagnaMap} subtitle={t.lagnaMapSub} labels={{ rasi: t.rasi, navamsa: t.navamsa, gochara: t.gochara }} />
         <div className="planetTable" role="table" aria-label={t.chartTitle}>

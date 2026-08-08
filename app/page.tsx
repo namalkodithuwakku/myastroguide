@@ -293,31 +293,12 @@ export default function Home() {
           <span><b>MY ASTRO</b><small>GUIDE</small></span>
         </a>
         <div className="navActions">
-          <a href="#guide">{t.navHow}</a>
           <div className="language" aria-label="Language selection">
             <button className={language === "en" ? "active" : ""} onClick={() => setLanguage("en")}>EN</button>
             <button className={language === "si" ? "active" : ""} onClick={() => setLanguage("si")}>සිං</button>
           </div>
         </div>
       </header>
-
-      <section className="hero shell" id="top">
-        <div className="heroCopy">
-          <p className="eyebrow"><span>✦</span>{t.eyebrow}</p>
-          <h1>{t.titleA}<em>{t.titleB}</em></h1>
-          <p className="intro">{t.intro}</p>
-          <div className="trustRow">
-            {[t.trustOne, t.trustTwo, t.trustThree].map((item) => <span key={item}>✓ {item}</span>)}
-          </div>
-        </div>
-
-        <div className="chartVisual" aria-hidden="true">
-          <div className="orbit orbitOne"><i>☉</i><i>☾</i><i>♃</i><i>♄</i></div>
-          <div className="orbit orbitTwo"><i>♈</i><i>♋</i><i>♎</i><i>♑</i></div>
-          <div className="chartCore"><span>ॐ</span><small>YOUR COSMIC<br />BLUEPRINT</small></div>
-        </div>
-
-      </section>
 
       <form className="birthCard formPanel shell" id="birth-form" onSubmit={submit} noValidate>
           <div className="cardHeading"><span>✦</span><div><h2>{t.cardTitle}</h2><p>{t.cardSub}</p></div></div>
@@ -428,13 +409,6 @@ export default function Home() {
         <p className="calculationNote">Astronomical positions use Astronomy Engine (MIT), Lahiri sidereal conversion, whole-sign houses, Sri Lankan fixed-house display, Parashari aspects and 365.2425-day Vimshottari timing. This section presents calculated data and relative power measurements—not life predictions. Professional use requires independent ephemeris validation.</p>
         </div>
       </section>}
-
-      <section className="guide shell" id="guide">
-        <p className="sectionLabel">{t.step}</p>
-        <div className="guideGrid">
-          {t.items.map((item, index) => <article key={item}><span>0{index + 1}</span><h3>{item}</h3></article>)}
-        </div>
-      </section>
 
       <nav className="mobileAppNav" aria-label="Mobile app navigation">
         <button type="button" className={activeSection === "profile" ? "active" : ""} disabled={!chart} onClick={() => { setActiveSection("profile"); document.getElementById("chart")?.scrollIntoView({ behavior: "smooth" }); }}><span>▦</span>{language === "si" ? "දත්ත" : "Data"}</button>

@@ -2,6 +2,8 @@
 
 A bilingual English/Sinhala Vedic astrology web application using Lahiri ayanamsa, Sri Lankan fixed-house charts, rule-based calculations, a whole-chart AI life-guide report, profile-grounded AI chat, city suggestions, PWA installation, and downloadable PDF reports.
 
+The compact application workspace is organised into four sections: Astro Data (calculations and relative power only), Life Guide (AI-polished complete report), Ask Guide (profile-grounded chat), and My Profiles & Reports (private on-device profile storage and PDF export).
+
 ## Run locally
 
 Requirements: Node.js 22 or later.

@@ -2,10 +2,9 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { calculateVedicChart, type VedicChart } from "../lib/vedic-engine";
-import { buildLifeGuide } from "../lib/guidance-engine";
-import { explainPlanet, explainYoga } from "../lib/technical-explanations";
 import AstroChat from "./astro-chat";
 import HolisticGuide from "./holistic-guide";
+import ProfileLibrary, { type SavedAstroProfile } from "./profile-library";
 
 const copy = {
   en: {
@@ -146,21 +145,6 @@ const CORNER_CELLS = [
 ];
 const SIGNS_EN=["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
 const SIGNS_SI=["මේෂ","වෘෂභ","මිථුන","කටක","සිංහ","කන්‍යා","තුලා","වෘශ්චික","ධනු","මකර","කුම්භ","මීන"];
-const PLANET_LIFE: Record<string, { en:string; si:string; giftEn:string; giftSi:string; challengeEn:string; challengeSi:string }> = {
-  sun:{en:"identity, confidence, authority and recognition",si:"අනන්‍යතාව, ආත්මවිශ්වාසය, අධිකාරිය සහ පිළිගැනීම",giftEn:"clear purpose, leadership and courage",giftSi:"පැහැදිලි අරමුණ, නායකත්වය සහ ධෛර්යය",challengeEn:"pride, pressure to prove yourself or authority conflicts",challengeSi:"අහංකාරය, තමන් ඔප්පු කිරීමේ පීඩනය හෝ අධිකාරිය සමඟ ගැටුම්"},
-  moon:{en:"emotional security, habits, memory and responses to change",si:"මානසික ආරක්ෂාව, පුරුදු, මතකය සහ වෙනස්කම්වලට ප්‍රතිචාර",giftEn:"empathy, adaptability and emotional intelligence",giftSi:"සංවේදීභාවය, අනුවර්තනය සහ මානසික බුද්ධිය",challengeEn:"mood fluctuations, over-sensitivity or restlessness",challengeSi:"මනෝභාව වෙනස්වීම්, අධික සංවේදීතාව හෝ නොසන්සුන්තාව"},
-  mercury:{en:"thinking, learning, speech, trade and decisions",si:"සිතීම, ඉගෙනීම, කථනය, වෙළඳාම සහ තීරණ",giftEn:"quick learning, communication and problem-solving",giftSi:"වේගවත් ඉගෙනීම, සන්නිවේදනය සහ ගැටලු විසඳීම",challengeEn:"overthinking, nervousness or inconsistent decisions",challengeSi:"අධිකව සිතීම, නොසන්සුන්තාව හෝ අස්ථාවර තීරණ"},
-  venus:{en:"love, marriage, comfort, creativity and values",si:"ආදරය, විවාහය, සුවපහසුව, නිර්මාණශීලීත්වය සහ වටිනාකම්",giftEn:"diplomacy, creativity and harmony",giftSi:"රාජ්‍යතාන්ත්‍රික බව, නිර්මාණශීලීත්වය සහ සමගිය",challengeEn:"over-attachment, indulgence or avoiding conflict",challengeSi:"අධික බැඳීම, සීමාව ඉක්මවා වින්දනය හෝ ගැටුම් මගහැරීම"},
-  mars:{en:"drive, courage, competition, boundaries and initiative",si:"ක්‍රියාශීලීත්වය, ධෛර්යය, තරඟකාරිත්වය, සීමා සහ ආරම්භය",giftEn:"decisive action, endurance and protection",giftSi:"තීරණාත්මක ක්‍රියා, දරාගැනීම සහ ආරක්ෂාව",challengeEn:"impatience, anger, haste or unnecessary conflict",challengeSi:"ඉක්මන්කම, කෝපය, හදිසිය හෝ අනවශ්‍ය ගැටුම්"},
-  jupiter:{en:"wisdom, education, children, opportunity and growth",si:"ප්‍රඥාව, අධ්‍යාපනය, දරුවන්, අවස්ථා සහ වර්ධනය",giftEn:"good judgment, generosity and meaningful expansion",giftSi:"හොඳ විනිශ්චය, දානය සහ අර්ථවත් වර්ධනය",challengeEn:"overconfidence, excess or relying on luck",challengeSi:"අධික විශ්වාසය, අතිරික්තය හෝ වාසනාව මත පමණක් රඳා සිටීම"},
-  saturn:{en:"duty, delay, discipline, work and maturity",si:"වගකීම, ප්‍රමාදය, විනය, වැඩ සහ පරිණතභාවය",giftEn:"patience, mastery and lasting results",giftSi:"ඉවසීම, ප්‍රවීණත්වය සහ දිගුකාලීන ප්‍රතිඵල",challengeEn:"restriction, loneliness, self-doubt or slow progress",challengeSi:"සීමා, තනිකම, ස්වයං සැකය හෝ මන්දගාමී ප්‍රගතිය"},
-  rahu:{en:"ambition, foreign influences, technology and unusual desires",si:"අභිලාෂය, විදේශ බලපෑම්, තාක්ෂණය සහ අසාමාන්‍ය ආශා",giftEn:"innovation, bold ambition and growth beyond familiar boundaries",giftSi:"නවෝත්පාදනය, දැඩි අභිලාෂය සහ හුරුපුරුදු සීමාවෙන් එහා වර්ධනය",challengeEn:"obsession, confusion, shortcuts or dissatisfaction",challengeSi:"අධික ඇලීම, ව්‍යාකූලතාව, කෙටි මාර්ග හෝ අතෘප්තිය"},
-  ketu:{en:"detachment, intuition, past mastery and spirituality",si:"විරාගය, අනුභූතිය, පෙර පුරුද්ද සහ ආධ්‍යාත්මිකත්වය",giftEn:"insight, independence and spiritual depth",giftSi:"ගැඹුරු අවබෝධය, ස්වාධීනත්වය සහ ආධ්‍යාත්මික ගැඹුර",challengeEn:"withdrawal, sudden breaks or difficulty staying engaged",challengeSi:"ඉවත් වීම, හදිසි බිඳීම් හෝ දිගටම සම්බන්ධව සිටීමේ අපහසුතාව"},
-};
-const HOUSE_LIFE = [
- ["personality, body, confidence and life direction","පෞරුෂය, ශරීරය, ආත්මවිශ්වාසය සහ ජීවන දිශාව"],["income, savings, family, speech and resources","ආදායම, ඉතිරිකිරීම්, පවුල, කථනය සහ සම්පත්"],["courage, skills, enterprise, siblings and short travel","ධෛර්යය, කුසලතා, ව්‍යවසාය, සහෝදරයන් සහ කෙටි ගමන්"],["home, mother, property and inner peace","නිවස, මව, දේපළ සහ අභ්‍යන්තර සැනසීම"],["education, creativity, children, romance and judgment","අධ්‍යාපනය, නිර්මාණශීලීත්වය, දරුවන්, ප්‍රේමය සහ විනිශ්චය"],["work, service, health habits, debts and obstacles","වැඩ, සේවය, සෞඛ්‍ය පුරුදු, ණය සහ බාධක"],["marriage, partnerships, clients and contracts","විවාහය, හවුල්කාරිත්වය, ගනුදෙනුකරුවන් සහ ගිවිසුම්"],["shared finances, inheritance, sudden change and transformation","හවුල් මූල්‍ය, උරුමය, හදිසි වෙනස්කම් සහ පරිවර්තනය"],["higher learning, mentors, ethics, long travel and fortune","උසස් අධ්‍යාපනය, ගුරුවරු, ධර්මය, දුර ගමන් සහ භාග්‍යය"],["career, reputation, leadership and public contribution","වෘත්තිය, කීර්තිය, නායකත්වය සහ පොදු දායකත්වය"],["profits, networks, recognition, goals and fulfilment","ලාභ, ජාල, පිළිගැනීම, ඉලක්ක සහ සපුරාලීම"],["foreign lands, expenses, sleep, solitude and spiritual life","විදේශ රටවල්, වියදම්, නින්ද, හුදකලාව සහ ආධ්‍යාත්මික ජීවිතය"]
-] as const;
-
 function LagnaChart({ chart, language, title, subtitle, labels }: { chart: VedicChart; language: "en" | "si"; title: string; subtitle: string; labels: { rasi: string; navamsa: string; gochara: string } }) {
   const [view, setView] = useState<"rasi" | "navamsa" | "transit">("rasi");
   const activeAscendant = view === "navamsa" ? chart.navamsa.ascendant : chart.ascendant;
@@ -201,13 +185,13 @@ export default function Home() {
   const [reportName, setReportName] = useState("");
   const [reportBirth, setReportBirth] = useState({ date: "", time: "" });
   const [pdfStatus, setPdfStatus] = useState<"idle" | "working" | "error">("idle");
+  const [activeSection, setActiveSection] = useState<"profile" | "guide" | "chat" | "saved">("profile");
   type PlaceResult = { name: string; latitude: number; longitude: number; timezone: string };
   const [placeQuery, setPlaceQuery] = useState("");
   const [placeSuggestions, setPlaceSuggestions] = useState<PlaceResult[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<PlaceResult | null>(null);
   const [placeSearching, setPlaceSearching] = useState(false);
   const t = copy[language];
-  const lifeGuide = chart ? buildLifeGuide(chart, language) : null;
 
   useEffect(() => {
     if (placeQuery.trim().length < 2 || selectedPlace?.name === placeQuery) return;
@@ -247,10 +231,22 @@ export default function Home() {
       setReportName(String(data.get("name")));
       setReportBirth({ date: String(data.get("date")), time: String(data.get("time")) });
       setChart(result); setResolvedPlace(location.name); setStatus("ready"); setMessage(t.ready);
+      setActiveSection("profile");
       setTimeout(() => document.getElementById("chart")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     } catch (error) {
       setStatus("error"); setMessage(error instanceof Error ? error.message : t.error);
     }
+  }
+
+  function loadSavedProfile(profile: SavedAstroProfile) {
+    setChart(profile.chart);
+    setReportName(profile.name);
+    setReportBirth({ date: profile.birthDate, time: profile.birthTime });
+    setResolvedPlace(profile.place);
+    setStatus("ready");
+    setMessage(language === "si" ? "සුරැකි පැතිකඩ විවෘත කරන ලදී." : "Saved profile opened.");
+    setActiveSection("profile");
+    setTimeout(() => document.getElementById("chart")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   }
 
   async function downloadPdf() {
@@ -290,7 +286,7 @@ export default function Home() {
   }
 
   return (
-    <main className={language === "si" ? "sinhala" : ""}>
+    <main className={`${language === "si" ? "sinhala" : ""} ${chart ? "hasChart" : ""}`}>
       <header className="nav shell">
         <a className="brand" href="#top" aria-label="My Astro Guide home">
           <span className="brandMark">✦</span>
@@ -341,7 +337,7 @@ export default function Home() {
       </form>
 
       {chart && <section className="chartReport shell" id="chart">
-        <div className="reportToolbar" data-html2canvas-ignore="true"><div><b>{language === "si" ? "ඔබේ සම්පූර්ණ වාර්තාව" : "Your complete report"}</b><span>{language === "si" ? "ජන්ම පත්‍රය සහ ජීවන මඟපෙන්වීම PDF ලෙස සුරකින්න." : "Save the chart and life guidance as a PDF."}</span></div><button type="button" onClick={downloadPdf} disabled={pdfStatus === "working"}><span>⇩</span>{pdfStatus === "working" ? t.preparingPdf : pdfStatus === "error" ? (language === "si" ? "නැවත උත්සාහ කරන්න" : "Please try again") : t.downloadPdf}</button></div>
+        <div className="reportToolbar" data-html2canvas-ignore="true"><div><b>{reportName || (language === "si" ? "ඔබේ ජ්‍යෝතිෂ පැතිකඩ" : "Your astro profile")}</b><span>{reportBirth.date} · {reportBirth.time} · {resolvedPlace}</span></div><div className="toolbarButtons"><button className="newProfileButton" type="button" onClick={() => { setChart(null); setStatus("idle"); setActiveSection("profile"); setTimeout(() => document.getElementById("birth-form")?.scrollIntoView({ behavior: "smooth" }), 50); }}>＋ {language === "si" ? "නව පැතිකඩ" : "New profile"}</button><button type="button" onClick={downloadPdf} disabled={pdfStatus === "working"}><span>⇩</span>{pdfStatus === "working" ? t.preparingPdf : pdfStatus === "error" ? (language === "si" ? "නැවත උත්සාහ කරන්න" : "Please try again") : t.downloadPdf}</button></div></div>
         <div className="reportHeader">
           <div><p className="eyebrow"><span>✦</span>MY ASTRO GUIDE</p><h2>{reportName || t.chartTitle}</h2><p>{t.chartTitle} · {reportBirth.date} · {reportBirth.time}</p><p>{t.locationLabel}: {resolvedPlace}</p></div>
           <div className="reportFacts">
@@ -350,22 +346,16 @@ export default function Home() {
             <span><small>{t.ayanamsa}</small><b>{chart.ayanamsa.toFixed(2)}°</b></span>
           </div>
         </div>
-        {lifeGuide && <section className="simpleGuideSection">
-          <div className="guideHero"><p>{language === "si" ? "AI නොමැති · ගණනය මත පදනම් වූ" : "NO AI · CALCULATION-BASED"}</p><h2>{language === "si" ? "ඔබේ සරල ජීවන මඟපෙන්වීම" : "Your practical life guide"}</h2><span>{lifeGuide.overall}</span></div>
-          <div className="guideSummaryGrid">
-            <article className="strengthSummary"><span>✦</span><h3>{language === "si" ? "ප්‍රධාන ශක්තීන්" : "Natural strengths"}</h3><ul>{lifeGuide.strengths.map(item=><li key={item}>{item}</li>)}</ul></article>
-            <article className="growthSummary"><span>↗</span><h3>{language === "si" ? "වර්ධනය කළ යුතු අංශ" : "Areas to develop"}</h3><ul>{lifeGuide.growth.map(item=><li key={item}>{item}</li>)}</ul></article>
-            <article className="timingSummary"><span>◷</span><h3>{language === "si" ? "දැනට අවධානය යොමු කළ යුතු දේ" : "Current-period focus"}</h3><p>{lifeGuide.timing}</p></article>
-          </div>
-          <div className="guidanceCards">{lifeGuide.cards.map(card=><article key={card.key}>
-            <div className="guidanceCardHead"><h3>{card.title}</h3><span>{card.level}</span></div>
-            <p className="guidanceParagraph">{card.paragraph}</p>
-            <div className="guidanceActions"><p><b>✓ {language === "si" ? "ඔබට හොඳම ක්‍රියාව" : "Best action"}</b>{card.action}.</p><p><b>! {language === "si" ? "වළකින්න" : "Be careful"}</b>{card.caution}.</p></div>
-            <details><summary>{language === "si" ? "මෙම මඟපෙන්වීම ලැබුණේ ඇයි?" : "Why this guidance?"}</summary><ul>{card.evidence.map(item=><li key={item}>{item}</li>)}</ul></details>
-          </article>)}</div>
-        </section>}
-        <HolisticGuide chart={chart} language={language} />
-        <AstroChat chart={chart} language={language} />
+        <nav className="workspaceTabs" data-html2canvas-ignore="true" aria-label="Profile sections">
+          <button className={activeSection === "profile" ? "active" : ""} type="button" onClick={() => setActiveSection("profile")}><span>▦</span><b>{language === "si" ? "ජ්‍යෝතිෂ දත්ත" : "Astro Data"}</b><small>{language === "si" ? "සටහන් සහ බල" : "Charts & power"}</small></button>
+          <button className={activeSection === "guide" ? "active" : ""} type="button" onClick={() => setActiveSection("guide")}><span>✦</span><b>{language === "si" ? "ජීවන මඟපෙන්වීම" : "Life Guide"}</b><small>{language === "si" ? "සම්පූර්ණ AI වාර්තාව" : "Complete AI report"}</small></button>
+          <button className={activeSection === "chat" ? "active" : ""} type="button" onClick={() => setActiveSection("chat")}><span>◌</span><b>{language === "si" ? "මඟපෙන්වීමෙන් අසන්න" : "Ask Guide"}</b><small>{language === "si" ? "පුද්ගලික AI කතාබහ" : "Personal AI chat"}</small></button>
+          <button className={activeSection === "saved" ? "active" : ""} type="button" onClick={() => setActiveSection("saved")}><span>◎</span><b>{language === "si" ? "මගේ පැතිකඩ" : "My Profiles"}</b><small>{language === "si" ? "සුරකින්න සහ වාර්තා" : "Save & reports"}</small></button>
+        </nav>
+        <div className={`appPane guidePane ${activeSection === "guide" ? "active" : ""}`}><HolisticGuide chart={chart} language={language} /></div>
+        <div className={`appPane chatPane ${activeSection === "chat" ? "active" : ""}`}><AstroChat chart={chart} language={language} /></div>
+        <div className={`appPane savedPane ${activeSection === "saved" ? "active" : ""}`}><ProfileLibrary language={language} current={{ name: reportName || "Astro Profile", birthDate: reportBirth.date, birthTime: reportBirth.time, place: resolvedPlace, chart }} onLoad={loadSavedProfile} onDownload={downloadPdf} /></div>
+        <div className={`appPane astroDataPane ${activeSection === "profile" ? "active" : ""}`}>
         <div className="technicalBridge"><span>✦</span><div><p>{language === "si" ? "සාක්ෂි සහ ගණනය" : "EVIDENCE & CALCULATIONS"}</p><h2>{language === "si" ? "සම්පූර්ණ ජ්‍යෝතිෂ පැතිකඩ" : "Detailed astrology profile"}</h2></div></div>
         <LagnaChart chart={chart} language={language} title={t.lagnaMap} subtitle={t.lagnaMapSub} labels={{ rasi: t.rasi, navamsa: t.navamsa, gochara: t.gochara }} />
         <div className="planetTable" role="table" aria-label={t.chartTitle}>
@@ -379,22 +369,6 @@ export default function Home() {
             <span className="miniScore" title={`${planet.powerGrade}: ${planet.powerFactors.join(" · ")}`}><i style={{ width: `${planet.strength}%` }} />{planet.strength}</span>
           </div>)}
         </div>
-
-        <section className="profileSection grahaExplanationSection">
-          <div className="sectionHeading"><span>✦</span><div><p>RULE-BASED · NO AI</p><h3>{t.grahaExplanations}</h3></div></div>
-          <div className="planetExplanationGrid">{chart.planets.map((planet)=>{const explanation=explainPlanet(chart,planet,language);return <article key={planet.key}>
-            <div className="planetCardHead"><span>{planet.nameEn.slice(0,2).toUpperCase()}</span><div><h4>{language==="si"?planet.nameSi:planet.nameEn}</h4><p>{language==="si"?`${planet.house} වන භාවය · ${planet.signSi}`:`House ${planet.house} · ${planet.signEn}`}</p></div><b>{explanation.level}</b></div>
-            <div className="lifeImpact">
-              <h5>{language==="si"?"මෙය ඔබේ ජීවිතය හැඩගස්වන ආකාරය":"How this shapes your life"}</h5>
-              <p className="simpleEffect">{explanation.meaning}</p>
-              <div className="simplePoints"><p><b>✓ {language==="si"?"ඉහළ නංවන බලය":"Uplifting power"}</b>{explanation.gift}.</p><p><b>! {language==="si"?"කපා හැරිය හැකි බලය":"Possible cutting power"}</b>{explanation.risk}.</p></div>
-              <p className="balanceNote"><b>{language==="si"?"සමබර/නිෂ්ක්‍රීය කරන බලය":"Balancing influence"}</b>{explanation.balance}</p>
-              <p className="actionNote"><b>{language==="si"?"ප්‍රායෝගික මඟපෙන්වීම":"Practical guidance"}</b>{explanation.action}.</p>
-              <p className="timingNote"><b>{language==="si"?"කාල සක්‍රියතාව":"Timing activation"}</b>{explanation.timing}</p>
-              <details className="calculationDetails"><summary>{language==="si"?"ජ්‍යෝතිෂ ගණන විස්තර බලන්න":"View calculation details"}</summary><div><p><b>{language==="si"?"බලය":"Strength"}:</b> {planet.strength}/100</p><p><b>{language==="si"?"සක්‍රිය කාලය":"Active periods"}:</b> {language==="si"?`${planet.nameSi} මහා දශා, අතුරු දශා සහ බලවත් ගෝචර.`:`${planet.nameEn} mahadasha, antardasha and strong transits.`}</p><ul>{planet.powerFactors.map((factor)=><li key={factor}>{factor}</li>)}</ul></div></details>
-            </div>
-          </article>})}</div>
-        </section>
 
         <section className="profileSection">
           <div className="sectionHeading"><span>00</span><div><p>PANCHANGA</p><h3>{t.panchangaTitle}</h3></div></div>
@@ -413,7 +387,7 @@ export default function Home() {
           <div className="sectionHeading"><span>01</span><div><p>ASTROLOGICAL SYNTHESIS</p><h3>{t.lifeAreas}</h3></div></div>
           <div className="lifeGrid">{chart.lifeAreas.map((area) => <article key={area.key}>
             <div className="scoreRing" style={{ "--score": `${area.score * 3.6}deg` } as React.CSSProperties}><b>{area.score}</b><small>/100</small></div>
-            <div><h4>{language === "si" ? area.titleSi : area.titleEn}</h4><p>{language === "si" ? area.summarySi : area.summaryEn}</p><ul>{(language === "si" ? area.factorsSi : area.factorsEn).map((factor) => <li key={factor}>{factor}</li>)}</ul></div>
+            <div><h4>{language === "si" ? area.titleSi : area.titleEn}</h4><p className="dataOnlyLabel">{language === "si" ? "සාපේක්ෂ බල මිනුම" : "Relative power measurement"}</p><ul>{(language === "si" ? area.factorsSi : area.factorsEn).map((factor) => <li key={factor}>{factor}</li>)}</ul></div>
           </article>)}</div>
         </section>
 
@@ -435,7 +409,7 @@ export default function Home() {
           </div>
           <div>
             <div className="sectionHeading"><span>04</span><div><p>YOGA ANALYSIS</p><h3>{t.yogasTitle}</h3></div></div>
-            <div className="yogaList yogaExplanationList">{chart.yogas.length ? chart.yogas.map((yoga) => {const explanation=explainYoga(chart,yoga,language);return <article key={yoga.key}><span>✦</span><div><h4>{language === "si" ? yoga.nameSi : yoga.nameEn} <em>{yoga.power}/100</em></h4><p className="yogaRule">{language === "si" ? yoga.descriptionSi : yoga.descriptionEn}</p><p className="yogaMeaning">{explanation.meaning}</p><div className="yogaPoints"><p><b>✓ {language==="si"?"හොඳ හැකියාව":"Positive potential"}</b>{explanation.gift}.</p><p><b>! {language==="si"?"සීමාව":"Possible limitation"}</b>{explanation.risk}.</p></div><p className="yogaAction"><b>{language==="si"?"භාවිත කරන ආකාරය":"How to use it"}</b>{explanation.action}.</p><p className="yogaTiming"><b>{language==="si"?"ක්‍රියාත්මක වන කාලය":"When it activates"}</b>{explanation.timing}</p><details><summary>{language==="si"?"ගණනයේ සාක්ෂි":"Calculation evidence"}</summary><small>{yoga.planets.join(" · ")} · {explanation.level} · {yoga.power}/100</small></details></div></article>}) : <p>{t.none}</p>}</div>
+            <div className="yogaList yogaDataList">{chart.yogas.length ? chart.yogas.map((yoga) => <article key={yoga.key}><span>✦</span><div><h4>{language === "si" ? yoga.nameSi : yoga.nameEn} <em>{yoga.power}/100</em></h4><p>{language === "si" ? yoga.descriptionSi : yoga.descriptionEn}</p><small>{yoga.planets.join(" · ")} · {yoga.grade}</small></div></article>) : <p>{t.none}</p>}</div>
           </div>
         </section>
 
@@ -450,8 +424,9 @@ export default function Home() {
           <div className="conditionGrid">{chart.conditions.map(item=><article className={item.detected?"detected":"clear"} key={item.key}><span>{item.detected?"!":"✓"}</span><div><h4>{language==="si"?item.nameSi:item.nameEn}</h4><p>{language==="si"?item.detailSi:item.detailEn}</p></div><b>{item.detected?item.power:"Clear"}</b></article>)}</div>
         </section>
 
-        <section className="methodology"><span>ⓘ</span><div><h3>{t.methodology}</h3><p>Life-area scores are relative tendencies within this birth chart, calculated from weighted houses, house lords, occupants, dignity, aspects and detected yogas. They are not percentages of guaranteed success. The explanations use calculated rules rather than AI; AI may later improve the writing but will not alter the chart.</p></div></section>
-        <p className="calculationNote">Astronomical positions use Astronomy Engine (MIT), Lahiri sidereal conversion, whole-sign houses, Sri Lankan fixed-house display, Parashari aspects and 365.2425-day Vimshottari timing. Professional use requires independent ephemeris validation.</p>
+        <section className="methodology"><span>ⓘ</span><div><h3>{t.methodology}</h3><p>All scores are relative power measurements within this birth chart, calculated from houses, lords, occupants, dignity, aspects and detected yogas. This Astro Data section does not interpret life results. Open Life Guide for the complete AI-polished report.</p></div></section>
+        <p className="calculationNote">Astronomical positions use Astronomy Engine (MIT), Lahiri sidereal conversion, whole-sign houses, Sri Lankan fixed-house display, Parashari aspects and 365.2425-day Vimshottari timing. This section presents calculated data and relative power measurements—not life predictions. Professional use requires independent ephemeris validation.</p>
+        </div>
       </section>}
 
       <section className="guide shell" id="guide">
@@ -462,9 +437,10 @@ export default function Home() {
       </section>
 
       <nav className="mobileAppNav" aria-label="Mobile app navigation">
-        <a href="#top"><span>⌂</span>{language === "si" ? "මුල් පිටුව" : "Home"}</a>
-        <a href="#birth-form"><span>✦</span>{language === "si" ? "සාදන්න" : "Create"}</a>
-        <a href="#chart" className={!chart ? "disabled" : ""}><span>▦</span>{language === "si" ? "වාර්තාව" : "Report"}</a>
+        <button type="button" className={activeSection === "profile" ? "active" : ""} disabled={!chart} onClick={() => { setActiveSection("profile"); document.getElementById("chart")?.scrollIntoView({ behavior: "smooth" }); }}><span>▦</span>{language === "si" ? "දත්ත" : "Data"}</button>
+        <button type="button" className={activeSection === "guide" ? "active" : ""} disabled={!chart} onClick={() => { setActiveSection("guide"); document.getElementById("chart")?.scrollIntoView({ behavior: "smooth" }); }}><span>✦</span>{language === "si" ? "මඟපෙන්වීම" : "Guide"}</button>
+        <button type="button" className={activeSection === "chat" ? "active" : ""} disabled={!chart} onClick={() => { setActiveSection("chat"); document.getElementById("chart")?.scrollIntoView({ behavior: "smooth" }); }}><span>◌</span>{language === "si" ? "අසන්න" : "Ask"}</button>
+        <button type="button" className={activeSection === "saved" ? "active" : ""} disabled={!chart} onClick={() => { setActiveSection("saved"); document.getElementById("chart")?.scrollIntoView({ behavior: "smooth" }); }}><span>◎</span>{language === "si" ? "පැතිකඩ" : "Profiles"}</button>
       </nav>
 
       <footer className="shell"><span>MY ASTRO GUIDE</span><p>Vedic wisdom · Modern clarity · Personal guidance</p><small>For reflective guidance, not medical, legal or financial advice.</small></footer>

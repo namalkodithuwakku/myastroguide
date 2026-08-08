@@ -42,7 +42,7 @@ export default function ProfileLibrary({
     const same = profiles.find(item => item.name.trim().toLowerCase() === current.name.trim().toLowerCase() && item.birthDate === current.birthDate && item.birthTime === current.birthTime);
     const saved: SavedAstroProfile = { ...current, id: same?.id || crypto.randomUUID(), savedAt: new Date().toISOString() };
     persist([saved, ...profiles.filter(item => item.id !== same?.id)]);
-    setNotice(language === "si" ? "පැතිකඩ මෙම උපාංගයේ සුරකින ලදී." : "Profile saved on this device.");
+    setNotice(language === "si" ? "පැතිකඩ සුරැකිණි." : "Profile saved on this device.");
   }
 
   function rename(profile: SavedAstroProfile) {
@@ -58,15 +58,15 @@ export default function ProfileLibrary({
 
   return <section className="profileLibrary">
     <div className="libraryActions">
-      <div><p>{language === "si" ? "මෙම උපාංගයේ පුද්ගලිකව සුරකින්න" : "SAVE PRIVATELY ON THIS DEVICE"}</p><h2>{language === "si" ? "මගේ පැතිකඩ සහ වාර්තා" : "My profiles & reports"}</h2><small>{language === "si" ? "ගිණුමක් හෝ දත්ත ගබඩාවක් අවශ්‍ය නොවේ." : "No account or database is required."}</small></div>
-      <div><button className="saveProfileButton" type="button" onClick={saveCurrent}>＋ {language === "si" ? "වත්මන් පැතිකඩ සුරකින්න" : "Save current profile"}</button><button className="downloadProfileButton" type="button" onClick={onDownload}>⇩ {language === "si" ? "PDF බාගන්න" : "Download PDF"}</button></div>
+      <div><p>{language === "si" ? "මෙම උපාංගයේ පමණක් සුරැකේ" : "SAVE PRIVATELY ON THIS DEVICE"}</p><h2>{language === "si" ? "සුරැකි පැතිකඩ" : "My profiles & reports"}</h2><small>{language === "si" ? "ගිණුමක් අවශ්‍ය නැත. තොරතුරු වෙනත් උපාංගයකට යවන්නේ නැත." : "No account or database is required."}</small></div>
+      <div><button className="saveProfileButton" type="button" onClick={saveCurrent}>＋ {language === "si" ? "මෙම පැතිකඩ සුරකින්න" : "Save current profile"}</button><button className="downloadProfileButton" type="button" onClick={onDownload}>⇩ {language === "si" ? "PDF පිටපත" : "Download PDF"}</button></div>
     </div>
     {notice && <p className="saveNotice">✓ {notice}</p>}
     <div className="savedProfileGrid">
       {profiles.map(profile => <article key={profile.id}>
         <div className="savedAvatar">{profile.name.slice(0, 1).toUpperCase()}</div>
         <div><h3>{profile.name}</h3><p>{profile.birthDate} · {profile.birthTime}</p><small>{profile.place}</small></div>
-        <div className="savedProfileActions"><button type="button" onClick={() => onLoad(profile)}>{language === "si" ? "විවෘත කරන්න" : "Open"}</button><button type="button" onClick={() => rename(profile)} aria-label="Rename">✎</button><button className="deleteSaved" type="button" onClick={() => remove(profile)} aria-label="Delete">×</button></div>
+        <div className="savedProfileActions"><button type="button" onClick={() => onLoad(profile)}>{language === "si" ? "බලන්න" : "Open"}</button><button type="button" onClick={() => rename(profile)} aria-label="Rename">✎</button><button className="deleteSaved" type="button" onClick={() => remove(profile)} aria-label="Delete">×</button></div>
       </article>)}
       {!profiles.length && <div className="emptyProfiles"><span>◎</span><h3>{language === "si" ? "තවම සුරැකි පැතිකඩක් නැත" : "No saved profiles yet"}</h3><p>{language === "si" ? "ඉහළ බොත්තම භාවිතයෙන් වත්මන් පැතිකඩ සුරකින්න." : "Save the current profile using the button above."}</p></div>}
     </div>
